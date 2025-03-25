@@ -13,6 +13,27 @@ symbol_count = {
     "C": 6,
     "D": 8,
 }
+symbol_value = {
+    "A": 5,
+    "B": 4,
+    "C": 3,
+    "D": 2,
+}
+
+
+def check_winnings(columns, lines, bet, values):
+    winnings = 0
+    winning_lines = []
+    for line in range(lines):
+        symbol = columns[0][line]
+        for column in columns:
+            symbol_to_check = column[line]
+            if symbol != symbol_to_check:
+                break
+        else:
+            winnings += bet * values[symbol]
+            winning_lines.append(line + 1)
+    return winnings, winning_lines
 
 
 def get_slot_machine_spin(rows, cols, symbols):
@@ -91,8 +112,7 @@ def get_bet():
     return amount
 
 
-def main():
-    balance = deposit()
+def spin(balance):
     lines = get_numbers_of_lines()
     while True:
         bet = get_bet()
@@ -107,7 +127,21 @@ def main():
         f"You are betting ${bet} on {lines} lines. You total bet is ${total_bet}.")
     slots = get_slot_machine_spin(ROWS, COLS, symbol_count)
     print_slot_machine(slots)
+    winnings, winning_lines = check_winnings(slots, lines, bet, symbol_value)
+    print(f"Your winnings is or are ${winnings}.")
+    print(f"Your winnings on, ", *winning_lines)
+    return winnings - total_bet
+
+
+def main():
+    balance = deposit()
+    while True:
+        print(f"Current balance is ${balance}")
+        answer = input("Press enter to play (q to quit). ")
+        if answer == 'q':
+            break
+        balance += spin(balance)
+    print(f"Your final balance is ${balance}.")
 
 
 main()
- 
